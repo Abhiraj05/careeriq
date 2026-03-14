@@ -1,5 +1,5 @@
 from django.db import models
-from user.models import userprofile
+from user.models import UserProfile
 # Create your models here.
 
 # class Select_Role(models.TextChoices):
@@ -40,7 +40,7 @@ class AptitudeQuestions(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 class AptitudeTest(models.Model):
-    user_id = models.ForeignKey(userprofile , on_delete=models.CASCADE)
+    user_id = models.ForeignKey(UserProfile , on_delete=models.CASCADE)
     # role = models.CharField(max_length=50 , choices=Select_Role.choices)
     test_mode = models.CharField(max_length=50 , choices=Select_Test_Mode.choices)
     category = models.CharField(max_length=50 , choices=Select_Category.choices)

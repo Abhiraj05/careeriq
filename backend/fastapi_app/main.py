@@ -33,7 +33,7 @@ os.environ["GROQ_API_KEY"] = GROQ_API_KEY
 
 
 # resume analysis and return a json response with insights and suggestions
-@app.get("/analyze_resume")
+@app.post("/analyze_resume")
 async def analyze_resume(request: ResumeAnalysisRequest):
     resume_text = request.resume_text
 
@@ -81,7 +81,7 @@ async def analyze_resume(request: ResumeAnalysisRequest):
 
 
 # generates a roadmap based on career role selected by user
-@app.get("/generate_roadmap")
+@app.post("/generate_roadmap")
 def generate_roadmap(request: Roadmap):
     career_role = request.career_role
 
@@ -126,7 +126,7 @@ def generate_roadmap(request: Roadmap):
 
 
 # generates a interview questions based on target role,company type,experience level,tech stack selected by user
-@app.get("/generate_interview_questions")
+@app.post("/generate_interview_questions")
 def generate_interview_questions(request: InterviewQuestionsRequest):
     target_role = request.target_role
     company_type = request.company_type
@@ -194,6 +194,7 @@ def generate_interview_questions(request: InterviewQuestionsRequest):
     return {"interview_questions": json_data_file}
 
 
+# generates a aptitude questions based on task mode,category,difficulty level,no of questions selected by user
 @app.post("/generate_aptitude_test")
 async def generate_aptitude_test(request: AptitudeTestRequest):
     task_mode = request.test_mode

@@ -1,19 +1,16 @@
 from rest_framework import serializers
-from .models import *
+from roadmap.models import CareerRole,RoadMap
 
-class RoadmapSerializer(serializers.ModelSerializer):
+class CareerRoleSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Roadmap
+        model = CareerRole
         fields = '__all__'
 
-class RoadMapLevelsSerializer(serializers.ModelSerializer):
+class RoadMapSerializer(serializers.ModelSerializer):
     class Meta:
-        model = RoadMapLevels
+        model = RoadMap
         fields = '__all__'
 
-class RoadMapSkillsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = RoadMapSkills
-        fields = '__all__'
+
 
         

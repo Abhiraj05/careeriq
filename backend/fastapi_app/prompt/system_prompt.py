@@ -106,6 +106,7 @@ Required JSON Structure:
   "career_role": "string",
   "roadmap": [
     {
+      "id":1,
       "phase": "Level 1: Phase Name",
       "focus": "short 1–2 sentence description of this level’s objective",
       "modules": [
@@ -114,9 +115,11 @@ Required JSON Structure:
         "Module 3",
         "Module 4"
       ],
-      "milestone": "clear measurable outcome for completing this phase"
+      "milestone": "clear measurable outcome for completing this phase",
+      "completed": false"
     },
     {
+      "id":2,
       "phase": "Level 2: Phase Name",
       "focus": "short description",
       "modules": [
@@ -125,7 +128,9 @@ Required JSON Structure:
         "Module 3",
         "Module 4"
       ],
-      "milestone": "measurable outcome"
+      "milestone": "measurable outcome",
+      "completed": false"
+      
     }
   ],
   "career_outcome": "clear description of job readiness at completion"

@@ -17,27 +17,29 @@ class ExperienceLevel(models.TextChoices):
 
 
 class CareerRole(models.Model):
-    user_id = models.ForeignKey(userprofile, on_delete=models.CASCADE)
+    user = models.ForeignKey(userprofile, on_delete=models.CASCADE)
     role_name = models.CharField(max_length=100, choices=roles.choices)
+    experience_level = models.CharField(max_length=50,choices=roles.choices)
+    current_skills = models.JSONField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
 
-class Roadmap(models.Model):
-    user_id = models.ForeignKey(userprofile, on_delete=models.CASCADE)
+class RoadMap(models.Model):
     role = models.ForeignKey(CareerRole, on_delete=models.CASCADE)
-    experience_level = models.CharField(max_length=50)
-    current_skills = models.JSONField()
+    roadmap=models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    
 
-class RoadMapLevels(models.Model):
-    user_id = models.ForeignKey(userprofile, on_delete=models.CASCADE)
-    roadmap = models.ForeignKey(Roadmap, on_delete=models.CASCADE)
-    level_no = models.IntegerField()
-    level_name = models.CharField(max_length=100)
+# class RoadMapLevels(models.Model):
+#     user_id = models.ForeignKey(userprofile, on_delete=models.CASCADE)
+#     roadmap = models.ForeignKey(Roadmap, on_delete=models.CASCADE)
+#     level_no = models.IntegerField()
+#     level_name = models.CharField(max_length=100)
 
-class RoadMapSkills(models.Model):
-    user_id = models.ForeignKey(userprofile, on_delete=models.CASCADE)
-    roadmap_level = models.ForeignKey(RoadMapLevels, on_delete=models.CASCADE)
-    skill_name = models.CharField(max_length=100)
-    skill_description = models.TextField()
-    esimated_time = models.CharField(max_length=50)
+# class RoadMapSkills(models.Model):
+#     user_id = models.ForeignKey(userprofile, on_delete=models.CASCADE)
+#     roadmap_level = models.ForeignKey(RoadMapLevels, on_delete=models.CASCADE)
+#     skill_name = models.CharField(max_length=100)
+#     skill_description = models.TextField()
+#     esimated_time = models.CharField(max_length=50)

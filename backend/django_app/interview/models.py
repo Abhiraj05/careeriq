@@ -1,5 +1,5 @@
 from django.db import models
-from user.models import userprofile
+from user.models import UserProfile
 # Create your models here.
 class company_type(models.TextChoices):
     STARTUP = 'Startup Company'
@@ -17,7 +17,7 @@ class Experience(models.TextChoices):
 
 
 class InterviewPrep(models.Model):
-    user_id = models.ForeignKey(userprofile , on_delete=models.CASCADE)
+    user_id = models.ForeignKey(UserProfile , on_delete=models.CASCADE)
     target_role = models.CharField(max_length=100 , choices=company_type.choices)
     experience_level = models.CharField(max_length=50 , choices=Experience.choices)
     tech_stack = models.JSONField()

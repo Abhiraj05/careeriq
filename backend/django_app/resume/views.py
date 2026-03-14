@@ -4,9 +4,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
-from .models import userresume , ResumeAnalysis
+from resume.models import UserResume, ResumeAnalysis
 import uuid
-from .serializers import ResumeUploadSerializer, ResumeDetailSerializer
+from resume.serializers import ResumeUploadSerializer, ResumeDetailSerializer
 from markdown_it import MarkdownIt
 from django.contrib.auth.models import User
 import os
