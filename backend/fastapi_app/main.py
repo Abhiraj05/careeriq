@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi_app.schemas.requestSchema import ResumeAnalysisRequest, InterviewQuestionsRequest, Roadmap , AptitudeTestRequest
+from schemas.requestSchema import ResumeAnalysisRequest, InterviewQuestionsRequest, Roadmap , AptitudeTestRequest
 from langchain_groq import ChatGroq
-from fastapi_app.prompt.system_prompt import resume_prompt, roadmap_prompt, interview_questions_prompt , aptitude_test_prompt
+from prompt.system_prompt import resume_prompt, roadmap_prompt, interview_questions_prompt , aptitude_test_prompt
 from dotenv import load_dotenv
 import os
 import json
@@ -152,7 +152,7 @@ def generate_interview_questions(request: InterviewQuestionsRequest):
         Target Role: {target_role}
         Company Type: {company_type}
         Experience Level: {experience_level}
-        Primary Tech Stack: {", ".join(tech_stack)}
+        Primary Tech Stack: {(tech_stack)}
 
         Determine the appropriate difficulty level automatically based on experience level:
         - Entry level / 0–1 years → Easy
@@ -190,7 +190,7 @@ def generate_interview_questions(request: InterviewQuestionsRequest):
     ]
     llm_model_response = groq_llm.invoke(messages)
     json_data_file = json.loads(llm_model_response.content)
-    print(json_data_file)
+    # print(json_data_file)
     return {"interview_questions": json_data_file}
 
 
