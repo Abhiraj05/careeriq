@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from .serializers import UserSignup
+from authentication.serializers import UserSignupSerializer, UserLoginSerializer
 from user.models import UserProfile as User
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -12,27 +12,28 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from common.email import send_email
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
+
 # Create your views here.
+
 
 class UserSignupView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        serializer = UserSignup(data=request.data)
-
+        serializer = UserSignupSerializer(data=request.data)
         if serializer.is_valid():
             name = request.data.get('name')
-            user_email = request.data.get('user_email')
+            email = request.data.get('email')
             password = request.data.get('password')
 
-            if User.objects.filter(email=user_email).exists():
+            if User.objects.filter(email=email).exists():
                 return Response({'message': 'email id already registered'},
-                    status=status.HTTP_400_BAD_REQUEST)
-            
+                                status=status.HTTP_400_BAD_REQUEST)
+
             user = User.objects.create(
-                name = name ,
-                user_email = user_email)
-                 
+                name=name,
+                email=email)
+
             user.set_password(password)
             user.save()
 
@@ -45,29 +46,34 @@ class UserSignupView(APIView):
 
 
 class UserLoginView(APIView):
-    permission_classes = []
+    permission_classes = [AllowAny]
 
-    def post(self , request):
-        user_email = request.data.get('user_email')
-        password = request.data.get('password')
+    def post(self, request):
+        serializer = UserLoginSerializer(data=request.data)
+     
+        if serializer.is_valid():
+            email = request.data.get('email')
+            password = request.data.get('password')
 
-        user = authenticate(request , user_email = user_email, password = password)
+            user = authenticate(request, email=email, password=password)
+            if user is None:
+                return Response(
+                    {"error": "Invalid credentials"},
+                    status=status.HTTP_401_UNAUTHORIZED
+                )
+            refresh = RefreshToken.for_user(user)
+            return Response({'message': 'user logged in successfully',
+                            'access': str(refresh.access_token),
+                             'refresh': str(refresh)
+                             }, status=status.HTTP_200_OK)
 
-        if user is None:
-            return Response(
-                {"error": "Invalid credentials"},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
-        refresh = RefreshToken.for_user(user)
-        return Response({'message': 'user logged in successfully',
-                        'access': str(refresh.access_token),
-                        'refresh': str(refresh)
-                    }, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # generates the reset link email & sends it to user
 class reset_password(APIView):
     permission_classes = [AllowAny]
+
     def reset_password(request):
         reset_email = request.data.get("email")
         user = User.objects.filter(email=reset_email).first()
@@ -99,8 +105,9 @@ class reset_password(APIView):
 
         return Response({"message": "Reset link generated and sent to your email."})
 
-
     # sets the new password in database
+
+
 class set_new_password(APIView):
     def set_new_password(request):
         uid = request.data.get('uid')

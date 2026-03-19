@@ -1,39 +1,42 @@
-import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import Button from '../components/ui/Button'
-import FormInput from '../components/ui/FormInput'
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import Button from "../components/ui/Button";
+import FormInput from "../components/ui/FormInput";
+import axios from "axios";
+
 
 export default function LoginPage() {
-  const navigate = useNavigate()
-  const [form, setForm] = useState({ email: '', password: '' })
-  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate();
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    try {
-      const res = await fetch('/api/auth/login/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: form.email, password: form.password }),
-      })
-      const data = await res.json()
-      if (res.ok) {
-        localStorage.setItem('token', data.access)
-        navigate('/dashboard')
-      } else {
-        alert('Login failed: ' + (data.detail || 'Check credentials'))
-      }
-    } catch (err) {
-      console.warn('Backend not available, proceeding with mock login')
-      localStorage.setItem('token', 'mock-token')
-      navigate('/dashboard')
-    } finally {
-      setLoading(false)
-    }
-  }
+    e.preventDefault();
+    if (!form.email || !form.password) {
+      alert("please fill the details");
+    } else {
+      setLoading(true);
+      try {
+        const response = await axios.post(
+          "http://127.0.0.1:8000/api/auth/login/",
+          form,
+        );
+        localStorage.setItem("access_token", response.data.access);
+        localStorage.setItem("refresh_token", response.data.refresh);
 
+        setForm({ email: "", password: "" });
+        setLoading(false);
+      } catch (error) {
+        console.log(
+          "Backend not available, proceeding with mock registration",
+          error,
+        );
+        setLoading(false);
+        alert("login failed");
+      }
+    }
+  };
   return (
     <div className="min-h-screen bg-bg flex items-center justify-center p-6 relative">
       {/* Background glow */}
@@ -49,8 +52,15 @@ export default function LoginPage() {
       >
         {/* Header */}
         <div className="text-center mb-10">
-          <Link to="/" className="font-display font-extrabold text-2xl gradient-text">CareerIQ</Link>
-          <h2 className="font-display font-bold text-2xl mt-5 mb-2">Welcome back</h2>
+          <Link
+            to="/"
+            className="font-display font-extrabold text-2xl gradient-text"
+          >
+            CareerIQ
+          </Link>
+          <h2 className="font-display font-bold text-2xl mt-5 mb-2">
+            Welcome back
+          </h2>
           <p className="text-muted text-sm">Sign in to continue your journey</p>
         </div>
 
@@ -74,24 +84,40 @@ export default function LoginPage() {
             />
 
             <div className="flex justify-end">
-              <span className="text-xs text-accent cursor-pointer hover:underline">Forgot password?</span>
+              <span className="text-xs text-accent cursor-pointer hover:underline">
+                Forgot password?
+              </span>
             </div>
 
-            <Button type="submit" loading={loading} className="w-full justify-center py-3.5 mt-1">
-              {!loading && 'Sign In'}
+            <Button
+              type="submit"
+              loading={loading}
+              className="w-full justify-center py-3.5 mt-1"
+            >
+              {!loading && "Sign In"}
             </Button>
           </form>
 
           <p className="text-center text-sm text-muted mt-6">
-            Don't have an account?{' '}
-            <Link to="/register" className="text-accent font-medium hover:underline">Sign up</Link>
+            Don't have an account?{" "}
+            <Link
+              to="/register"
+              className="text-accent font-medium hover:underline"
+            >
+              Sign up
+            </Link>
           </p>
         </div>
 
         <div className="text-center mt-6">
-          <Link to="/" className="text-muted text-sm hover:text-[#e8e8f0] transition-colors">← Back to home</Link>
+          <Link
+            to="/"
+            className="text-muted text-sm hover:text-[#e8e8f0] transition-colors"
+          >
+            ← Back to home
+          </Link>
         </div>
       </motion.div>
     </div>
-  )
+  );
 }

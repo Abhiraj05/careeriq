@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import InterviewPrep, InterviewQuestion
+from interview.models import InterviewPrep, InterviewQuestion
 
 
 class InterviewPrepSerializer(serializers.ModelSerializer):
