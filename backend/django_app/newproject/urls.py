@@ -24,6 +24,7 @@ urlpatterns = [
     path('api/auth/', include('authentication.urls')),
     path('api/roadmap/', include('roadmap.urls')),
     path('api/interview/', include('interview.urls')),
+    path('api/resume/', include('resume.urls')),
     path('api/aptitude/', include('aptitude.urls')),
     path('api/progress/', include('progress.urls')),
     path('api/user/', include('user.urls')),

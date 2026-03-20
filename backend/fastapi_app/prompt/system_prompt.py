@@ -32,29 +32,33 @@ Required JSON Structure:
   "overall_label": "string (e.g., Excellent / Good Foundation / Needs Improvement)",
   "overall_summary": "short 1–2 sentence summary",
 
-  "section_analysis": {
-    "contact_summary": {
-      "score": number,
-      "feedback": "string"
-    },
-    "work_experience": {
-      "score": number,
-      "feedback": "string"
-    },
-    "skills_section": {
-      "score": number,
-      "feedback": "string"
-    },
-    "education": {
-      "score": number,
-      "feedback": "string"
-    },
-    "ats_compatibility": {
-      "score": number,
-      "feedback": "string"
-    }
+  "section_analysis": [
+  {
+    label: "Contact & Summary",
+    score: number,
+    feedback: "string",
   },
-
+  {
+    label: "Work Experience",
+    score: number,
+    feedback: "string",
+  },
+  {
+    label: "Skills Section",
+    score: number,
+    feedback: "string",
+  },
+  {
+    label: "Education",
+    score: number,
+    feedback: "string" ,
+  },
+  {
+    label: "ATS Compatibility",
+    score: number,
+    feedback: "string",
+  },
+]
   "top_improvements": [
     "string",
     "string",

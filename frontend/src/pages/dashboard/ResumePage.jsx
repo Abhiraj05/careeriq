@@ -1,51 +1,62 @@
-import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import PageHeader from '../../components/layout/PageHeader'
-import Card from '../../components/ui/Card'
-import Button from '../../components/ui/Button'
-import ProgressBar from '../../components/ui/ProgressBar'
-import ScoreRing from '../../components/ui/ScoreRing'
-import Icon from '../../components/ui/Icon'
-import Loader from '../../components/ui/Loader'
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import PageHeader from "../../components/layout/PageHeader";
+import Card from "../../components/ui/Card";
+import Button from "../../components/ui/Button";
+import ProgressBar from "../../components/ui/ProgressBar";
+import ScoreRing from "../../components/ui/ScoreRing";
+import Icon from "../../components/ui/Icon";
+import Loader from "../../components/ui/Loader";
+import axios from "axios";
 
-const SECTIONS = [
-  { label: 'Contact & Summary', score: 90, feedback: 'Excellent. Complete contact info and compelling professional summary.' },
-  { label: 'Work Experience', score: 72, feedback: 'Add quantifiable metrics to achievements. Use action verbs consistently.' },
-  { label: 'Skills Section', score: 85, feedback: 'Well-organized. Consider grouping by category (Languages, Frameworks, Tools).' },
-  { label: 'Education', score: 95, feedback: 'Perfect formatting. GPA and relevant coursework clearly stated.' },
-  { label: 'ATS Compatibility', score: 62, feedback: 'Avoid tables and graphics. Improve keyword density for target roles.' },
-]
-
-const TIPS = [
-  "Add 3–5 quantifiable metrics per role (e.g., 'Reduced load time by 40%')",
-  'Remove tables and graphics for better ATS parsing',
-  'Include more keywords from target job descriptions',
-  'Add a Projects section with GitHub links',
-  "Strengthen action verbs: replace 'helped' with 'led', 'built', 'optimized'",
-  'Tailor your summary for each specific application',
-]
-
-const scoreColor = (s) => (s >= 80 ? '#38e2c7' : s >= 65 ? '#fbbf24' : '#f97aad')
+const scoreColor = (s) =>
+  s >= 80 ? "#38e2c7" : s >= 65 ? "#fbbf24" : "#f97aad";
 
 export default function ResumePage() {
-  const [dragging, setDragging] = useState(false)
-  const [file, setFile] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const [analyzed, setAnalyzed] = useState(false)
+  const [dragging, setDragging] = useState(false);
+  const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [analyzed, setAnalyzed] = useState(false);
+  const [sectionData, setSectionData] = useState([]);
+  const [tipsData, setTipsData] = useState([]);
+  const [overallScore, setOverallScore] = useState("");
+  const [overallLabel, setOverallLabel] = useState("");
 
   const handleDrop = (e) => {
-    e.preventDefault()
-    setDragging(false)
-    const f = e.dataTransfer.files[0]
-    if (f) setFile(f)
-  }
+    e.preventDefault();
+    setDragging(false);
+    const f = e.dataTransfer.files[0];
+    if (f) setFile(f);
+  };
 
-  const handleClick = () => setFile({ name: 'resume_alex_2025.pdf', size: '2.1 MB' })
-
-  const handleAnalyze = () => {
-    setLoading(true)
-    setTimeout(() => { setLoading(false); setAnalyzed(true) }, 2000)
-  }
+  const handleClick = () => {
+    document.getElementById("fileUpload").click();
+  };
+  const handleAnalyze = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("resume_file", file);
+    setLoading(true);
+    try {
+      setAnalyzed(false);
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/resume/upload/",
+        formData,
+      );
+      setOverallScore(response.data.analysis_result.overall_score);
+      setOverallLabel(response.data.analysis_result.overall_label);
+      setSectionData(response.data.analysis_result.section_analysis);
+      setTipsData(response.data.analysis_result.top_improvements);
+      setAnalyzed(true);
+      setLoading(false);
+      alert("resume analyzed successfully");
+    } catch (error) {
+      console.log(error);
+      setAnalyzed(false);
+      setLoading(false);
+      alert("resume analysis failed");
+    }
+  };
 
   return (
     <div>
@@ -62,39 +73,71 @@ export default function ResumePage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className={`drop-zone mb-6 ${dragging ? 'border-accent/60 bg-accent/5' : ''}`}
-            onDragOver={(e) => { e.preventDefault(); setDragging(true) }}
+            className={`drop-zone mb-6 ${dragging ? "border-accent/60 bg-accent/5" : ""}`}
+            onDragOver={(e) => {
+              e.preventDefault();
+              setDragging(true);
+            }}
             onDragLeave={() => setDragging(false)}
             onDrop={handleDrop}
             onClick={handleClick}
           >
             <motion.div
               animate={{ y: [0, -8, 0] }}
-              transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
+              transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
               className="text-accent mb-4 mx-auto w-fit"
             >
               <Icon name="upload" size={48} />
             </motion.div>
-            <h3 className="font-display font-bold text-xl mb-2">Drop your resume here</h3>
-            <p className="text-muted text-sm mb-6">Supports PDF, DOC, DOCX · Max 5MB</p>
+            <h3 className="font-display font-bold text-xl mb-2">
+              Drop your resume here
+            </h3>
+            <p className="text-muted text-sm mb-6">
+              Supports PDF, DOC, DOCX · Max 5MB
+            </p>
             <Button size="sm">Browse Files</Button>
+            <input
+              type="file"
+              accept=".pdf,.doc,.docx"
+              id="fileUpload"
+              className="hidden"
+              onChange={(e) => {
+                const f = e.target.files[0];
+                if (f) setFile(f);
+              }}
+            />
           </motion.div>
         ) : (
-          <motion.div key="uploaded" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
+          <motion.div
+            key="uploaded"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
             <Card padding="p-5" className="mb-5 flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-accent3/12 border border-accent3/30 flex items-center justify-center text-accent3 flex-shrink-0">
                 <Icon name="file" size={22} />
               </div>
               <div className="flex-1">
                 <p className="font-semibold text-sm">{file.name}</p>
-                <p className="text-xs text-muted mt-0.5">PDF · {file.size || '2.1 MB'} · Uploaded just now</p>
+                <p className="text-xs text-muted mt-0.5">
+                  PDF · {file.size || "2.1 MB"} · Uploaded just now
+                </p>
               </div>
               <div className="flex items-center gap-3">
                 <Button onClick={handleAnalyze} loading={loading}>
                   <Icon name="bolt" size={15} />
-                  {!loading && 'Analyze Resume'}
+                  {!loading && "Analyze Resume"}
                 </Button>
-                <Button variant="ghost" size="sm" onClick={() => { setFile(null); setAnalyzed(false) }}>Remove</Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setFile(null);
+                    setAnalyzed(false);
+                  }}
+                >
+                  Remove
+                </Button>
               </div>
             </Card>
 
@@ -102,25 +145,38 @@ export default function ResumePage() {
 
             <AnimatePresence>
               {analyzed && !loading && (
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
                   {/* Score + Sections */}
                   <div className="grid lg:grid-cols-5 gap-5 mb-5">
                     {/* Score Ring */}
                     <Card className="lg:col-span-2 flex flex-col items-center justify-center gap-5 py-8">
-                      <ScoreRing score={74} size={140} label="Overall Score" />
+                      <ScoreRing
+                        score={overallScore}
+                        size={140}
+                        label="Overall Score"
+                      />
                       <div className="text-center">
-                        <p className="font-display font-bold text-base mb-2">Good Foundation</p>
+                        <p className="font-display font-bold text-base mb-2">
+                          {overallLabel}
+                        </p>
                         <p className="text-muted text-xs leading-relaxed max-w-[200px]">
-                          Strong structure detected. ATS optimization and quantifiable metrics will push this to 90+.
+                          Strong structure detected. ATS optimization and
+                          quantifiable metrics will push this to 90+.
                         </p>
                       </div>
                     </Card>
 
                     {/* Section Analysis */}
                     <Card className="lg:col-span-3" padding="p-6">
-                      <h3 className="font-display font-bold text-base mb-5">Section Analysis</h3>
+                      <h3 className="font-display font-bold text-base mb-5">
+                        Section Analysis
+                      </h3>
                       <div className="flex flex-col gap-4">
-                        {SECTIONS.map((s, i) => (
+                        {sectionData.map((s, i) => (
                           <motion.div
                             key={s.label}
                             initial={{ opacity: 0, x: -10 }}
@@ -129,10 +185,20 @@ export default function ResumePage() {
                           >
                             <div className="flex justify-between mb-1.5 text-xs">
                               <span className="font-medium">{s.label}</span>
-                              <span className="font-bold" style={{ color: scoreColor(s.score) }}>{s.score}%</span>
+                              <span
+                                className="font-bold"
+                                style={{ color: scoreColor(s.score) }}
+                              >
+                                {s.score}%
+                              </span>
                             </div>
-                            <ProgressBar pct={s.score} color={scoreColor(s.score)} />
-                            <p className="text-muted text-xs mt-1.5 leading-relaxed">{s.feedback}</p>
+                            <ProgressBar
+                              pct={s.score}
+                              color={scoreColor(s.score)}
+                            />
+                            <p className="text-muted text-xs mt-1.5 leading-relaxed">
+                              {s.feedback}
+                            </p>
                           </motion.div>
                         ))}
                       </div>
@@ -141,9 +207,11 @@ export default function ResumePage() {
 
                   {/* Improvement Tips */}
                   <Card padding="p-6">
-                    <h3 className="font-display font-bold text-base mb-5">🎯 Top Improvement Suggestions</h3>
+                    <h3 className="font-display font-bold text-base mb-5">
+                      🎯 Top Improvement Suggestions
+                    </h3>
                     <div className="grid md:grid-cols-2 gap-3">
-                      {TIPS.map((tip, i) => (
+                      {tipsData.map((tip, i) => (
                         <motion.div
                           key={i}
                           initial={{ opacity: 0, y: 10 }}
@@ -151,8 +219,12 @@ export default function ResumePage() {
                           transition={{ delay: i * 0.06 }}
                           className="flex gap-3 p-4 bg-surface2 border border-white/[0.07] rounded-xl"
                         >
-                          <span className="text-accent font-bold font-display text-sm flex-shrink-0">{i + 1}.</span>
-                          <p className="text-muted text-xs leading-relaxed">{tip}</p>
+                          <span className="text-accent font-bold font-display text-sm flex-shrink-0">
+                            {i + 1}.
+                          </span>
+                          <p className="text-muted text-xs leading-relaxed">
+                            {tip}
+                          </p>
                         </motion.div>
                       ))}
                     </div>
@@ -164,5 +236,5 @@ export default function ResumePage() {
         )}
       </AnimatePresence>
     </div>
-  )
+  );
 }
