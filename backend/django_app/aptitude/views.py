@@ -8,10 +8,11 @@ import requests
 from django.http import JsonResponse
 import json
 
-# Generating Interview Test
+# Generating Aptitude Test
 class StartTestView(APIView):
     permission_classes = [IsAuthenticated]
     def post(self, request):
+        print(request)
         serializer = StartTestSerializer(data=request.data)
         
         if serializer.is_valid():

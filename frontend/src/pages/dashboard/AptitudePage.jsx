@@ -108,11 +108,11 @@ export default function AptitudePage() {
         difficulty_level: difficulty,
         no_of_questions: numQuestions
       };
-            console.log(payload)
+            
 
       const response = await axios.post(
         
-        "http://127.0.0.1:8000/api/aptitude/start-test/",
+        "http://127.0.0.1:8000/api/aptitude/start_test/",
         payload,
         {
           headers: {
@@ -120,6 +120,7 @@ export default function AptitudePage() {
           },
         }
       );
+      console.log(response)
       
       const data = response.data;
       setCurrentTestId(data.id);
