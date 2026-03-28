@@ -1,136 +1,166 @@
-CareerIQ - AI Career Intelligence Platform
+# CareerIQ - AI Career Intelligence Platform
 
 An intelligent application designed to help students and professionals improve their career preparation using AI. The platform provides tools for generating career roadmaps, practicing interviews, building resumes, and solving aptitude tests. Built with a modern full-stack architecture using React, Django, FastAPI, and LangChain.
 
-Features
+---
 
-AI Career Roadmaps: Generate personalized learning paths based on career goals
-Mock Interviews: Practice interview questions with AI-based feedback
-Resume Builder: Create structured and ATS-friendly resumes
-Aptitude Tests: Solve role-based and difficulty-based questions
-Progress Tracking: Monitor performance and improvement areas
-User Authentication: Secure login and registration system
-Responsive UI: Modern interface built with React and Tailwind CSS
+## Features
 
-Architecture
+* AI Career Roadmaps: Generate personalized learning paths based on career goals
+* Mock Interviews: Practice interview questions with AI-based feedback
+* Resume Builder: Create ATS-friendly resumes
+* Aptitude Tests: Solve role-based and difficulty-based questions
+* Progress Tracking: Monitor performance and improvement areas
+* User Authentication: Secure login and registration system
+* Responsive UI: Built using React and Tailwind CSS
 
-Tech Stack
+---
 
-Frontend:
+## Architecture
 
-React
-Tailwind CSS
-Framer Motion
+### Tech Stack
 
-Backend:
+#### Frontend:
 
-Django with Django REST Framework
-FastAPI for AI operations
-JWT authentication
+* React
+* Tailwind CSS
+* Framer Motion
 
-AI/ML:
+#### Backend:
 
-Groq API
-LangChain
+* Django with Django REST Framework
+* FastAPI (for AI operations)
+* JWT Authentication
 
-Database:
+#### AI/ML:
 
-SQLite / PostgreSQL
+* Groq API
+* LangChain
 
-Installation
+#### Database:
 
-1. Clone the Repository
+* SQLite / PostgreSQL
 
+---
+
+## Installation
+
+### 1. Clone the Repository
+
+```bash
 git clone https://github.com/your-username/careeriq.git
 cd careeriq
+```
 
-2. Frontend Setup
+---
 
+### 2. Frontend Setup
+
+```bash
 cd frontend
 npm install
 npm run dev
+```
 
 The frontend will run on http://localhost:5173
 
-3. Backend Setup - Django
+---
 
+### 3. Backend Setup - Django
+
+```bash
 cd backend/django_app
 
 # create environment
-
 python -m venv env
 
 # Windows
-
 env\Scripts\activate
 
 # macOS / Linux
-
 source env/bin/activate
 
 pip install -r requirements.txt
 
 # Run migrations
-
 python manage.py makemigrations
 python manage.py migrate
 
 # Start Django server
-
 python manage.py runserver
+```
 
 Django runs on http://127.0.0.1:8000
 
-4. Backend Setup - FastAPI
+---
 
+### 4. Backend Setup - FastAPI
+
+```bash
 cd backend/fastapi_app
 
 # create environment
-
 python -m venv env
 
 # Windows
-
 env\Scripts\activate
 
 # macOS / Linux
-
 source env/bin/activate
 
 # Create .env file
-
 echo "GROQ_API_KEY=your_groq_api_key_here" > .env
 
 pip install -r requirements.txt
 
 # Start FastAPI server
-
 uvicorn main:app --reload --port 8001
+```
 
 FastAPI runs on http://127.0.0.1:8001
 
-5. Configuration
+---
 
-Environment Variables
+## Configuration
 
-FastAPI
+### Environment Variables
 
-Create .env file in backend/fastapi_app/
+#### FastAPI
 
+Create `.env` file in `backend/fastapi_app/`
+
+```bash
 GROQ_API_KEY=your_groq_api_key
+```
 
 ---
 
-Screenshots
+## Screenshots
 
 ![image](assets/screencapture-localhost-5173-2026-03-28-23_19_16.png)
-![image](assets/screencapture-localhost-5173-dashboard-2026-03-28-23_22_46.png)
-![image](assets/screencapture-localhost-5173-dashboard-aptitude-2026-03-28-23_26_40.png)
-![image](assets/screencapture-localhost-5173-dashboard-aptitude-2026-03-28-23_27_31.png)
-![image](assets/screencapture-localhost-5173-dashboard-interview-2026-03-28-23_25_40.png)
-![image](assets/screencapture-localhost-5173-dashboard-progress-2026-03-28-23_27_50.png)
-![image](assets/screencapture-localhost-5173-dashboard-resume-2026-03-28-23_26_18.png)
-![image](assets/screencapture-localhost-5173-dashboard-roadmap-2026-03-28-23_24_07.png)
-![image](assets/screencapture-localhost-5173-dashboard-settings-2026-03-28-23_28_09.png)
+
 ![image](assets/screencapture-localhost-5173-login-2026-03-28-23_21_53.png)
+
 ![image](assets/screencapture-localhost-5173-register-2026-03-28-23_21_29.png)
+
+![image](assets/screencapture-localhost-5173-dashboard-2026-03-28-23_22_46.png)
+
+![image](assets/screencapture-localhost-5173-dashboard-roadmap-2026-03-28-23_24_07.png)
+
+![image](assets/screencapture-localhost-5173-dashboard-interview-2026-03-28-23_25_40.png)
+
+![image](assets/screencapture-localhost-5173-dashboard-resume-2026-03-28-23_26_18.png)
+
+![image](assets/screencapture-localhost-5173-dashboard-aptitude-2026-03-28-23_26_40.png)
+
+![image](assets/screencapture-localhost-5173-dashboard-aptitude-2026-03-28-23_27_31.png)
+
+![image](assets/screencapture-localhost-5173-dashboard-progress-2026-03-28-23_27_50.png)
+
+![image](assets/screencapture-localhost-5173-dashboard-settings-2026-03-28-23_28_09.png)
+
+---
+
+## Conclusion
+
+CareerIQ is designed to simplify career preparation by combining multiple tools into a single platform. It provides structured guidance, AI-powered assistance, and performance tracking to help users improve efficiently.
