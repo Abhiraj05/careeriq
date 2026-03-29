@@ -21,9 +21,14 @@ const PREFS = [
   { key: 'dark_mode', label: 'Dark Mode', desc: 'Use the dark color theme (recommended)' },
   { key: 'ai_suggestions', label: 'AI Suggestions', desc: 'Get personalized tips from the AI engine' },
 ]
+const PLAN_DETAILS = {
+  free: { name: 'Free Plan', desc: '5 roadmaps/month · 20 interview questions · Basic analytics' },
+  pro: { name: 'Pro Plan', desc: 'Unlimited roadmaps & prep · Advanced AI performance analytics' },
+  enterprise: { name: 'Plus Plan', desc: 'Everything in Pro · Direct human mentor support' }
+}
 
 export default function SettingsPage() {
-  const { user, setUser } = useApp()
+  const { user, setUser, subscriptionPlan } = useApp()
   const [profile, setProfile] = useState({ name: '', email: '', current_role: '', company: '' })
   const [prefs, setPrefs] = useState({ email_notifications: true, weekly_report: true, dark_mode: true, ai_suggestions: true })
   const [loading, setLoading] = useState(true)
@@ -136,10 +141,10 @@ export default function SettingsPage() {
             <h3 className="font-display font-bold text-base mb-4">Subscription</h3>
             <div className="bg-accent/8 border border-accent/20 rounded-xl p-4 mb-4">
               <div className="flex items-center justify-between mb-2">
-                <span className="font-semibold text-sm">Free Plan</span>
+                <span className="font-semibold text-sm">{PLAN_DETAILS[subscriptionPlan]?.name || 'Free Plan'}</span>
                 <span className="text-xs text-accent bg-accent/15 px-2.5 py-1 rounded-full font-semibold">Current</span>
               </div>
-              <p className="text-muted text-xs">5 roadmaps/month · 20 interview questions · Basic analytics</p>
+              <p className="text-muted text-xs">{PLAN_DETAILS[subscriptionPlan]?.desc || PLAN_DETAILS.free.desc}</p>
             </div>
             <Button 
               onClick={() => navigate('/dashboard/pricing')}

@@ -4,10 +4,11 @@ import { loadStripe } from '@stripe/stripe-js'
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import { motion, AnimatePresence } from 'framer-motion'
 import axios from 'axios'
+import { useApp } from '../../context/AppContext'
 import Button from './Button'
 import Icon from './Icon'
 
-const stripePromise = loadStripe('pk_test_51PqYhGRp2Z1z3Z1z3Z1z3Z1z3Z1z3Z1z3Z1z3Z1z3Z1z3Z1z3Z1z3Z1z3Z1z3Z1z')
+const stripePromise = loadStripe('pk_test_TYooMQauvdEDq54NiTphI7jx')
 
 const CheckoutForm = ({ amount, onCancel, onSuccess }) => {
   const stripe = useStripe()
@@ -75,7 +76,8 @@ const CheckoutForm = ({ amount, onCancel, onSuccess }) => {
   )
 }
 
-export default function CheckoutModal({ isOpen, onClose, amount = 19 }) {
+export default function CheckoutModal({ isOpen, onClose, amount = 19, planId }) {
+  const { setSubscriptionPlan } = useApp()
   const [success, setSuccess] = useState(false)
   const navigate = useNavigate()
 
@@ -135,7 +137,7 @@ export default function CheckoutModal({ isOpen, onClose, amount = 19 }) {
             <CheckoutForm 
               amount={amount} 
               onCancel={onClose} 
-              onSuccess={() => setSuccess(true)} 
+              onSuccess={() => { setSuccess(true); if(planId) setSubscriptionPlan(planId); }} 
             />
           </Elements>
 

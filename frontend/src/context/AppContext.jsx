@@ -13,7 +13,11 @@ export function AppProvider({ children }) {
   const [userLoading, setUserLoading] = useState(true)
   const [roadmapProgress, setRoadmapProgress] = useState({})
   const [aptitudeScores, setAptitudeScores] = useState([])
+  const [subscriptionPlan, setSubscriptionPlan] = useState(localStorage.getItem('career_iq_plan') || 'free')
 
+  useEffect(() => {
+    localStorage.setItem('career_iq_plan', subscriptionPlan)
+  }, [subscriptionPlan])
   useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem('access_token')
@@ -58,6 +62,8 @@ export function AppProvider({ children }) {
     setRoadmapProgress,
     aptitudeScores,
     setAptitudeScores,
+    subscriptionPlan,
+    setSubscriptionPlan,
   }
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>

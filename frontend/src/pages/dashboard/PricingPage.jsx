@@ -6,6 +6,7 @@ import Card from '../../components/ui/Card'
 import Button from '../../components/ui/Button'
 import Icon from '../../components/ui/Icon'
 import CheckoutModal from '../../components/ui/CheckoutModal'
+import { useApp } from '../../context/AppContext'
 
 const PLANS = [
   {
@@ -19,9 +20,8 @@ const PLANS = [
       'Basic progress tracking',
       'Community access'
     ],
-    buttonText: 'Current Plan',
+    buttonText: 'Get Started',
     buttonVariant: 'secondary',
-    isCurrent: true,
   },
   {
     id: 'pro',
@@ -57,6 +57,7 @@ const PLANS = [
 ]
 
 export default function PricingPage() {
+  const { subscriptionPlan } = useApp()
   const [selectedPlan, setSelectedPlan] = useState(null)
   const isShowCheckout = !!selectedPlan
 
@@ -114,11 +115,11 @@ export default function PricingPage() {
                 </div>
 
                 <Button
-                  onClick={() => !plan.isCurrent && setSelectedPlan(plan)}
-                  variant={plan.buttonVariant}
-                  className={`w-full justify-center py-4 text-sm font-bold uppercase tracking-wider ${plan.isCurrent ? 'opacity-50 cursor-default' : ''}`}
+                  onClick={() => subscriptionPlan !== plan.id && setSelectedPlan(plan)}
+                  variant={subscriptionPlan === plan.id ? 'secondary' : plan.buttonVariant}
+                  className={`w-full justify-center py-4 text-sm font-bold uppercase tracking-wider ${subscriptionPlan === plan.id ? 'opacity-50 cursor-default' : ''}`}
                 >
-                  {plan.buttonText}
+                  {subscriptionPlan === plan.id ? 'Current Plan' : plan.buttonText}
                 </Button>
               </div>
             </Card>
@@ -138,6 +139,7 @@ export default function PricingPage() {
         isOpen={isShowCheckout} 
         onClose={() => setSelectedPlan(null)} 
         amount={selectedPlan?.price || 0}
+        planId={selectedPlan?.id || 'free'}
       />
     </div>
   )
