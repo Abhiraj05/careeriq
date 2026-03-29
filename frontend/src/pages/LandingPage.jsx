@@ -354,12 +354,13 @@ export default function LandingPage() {
           © 2025 CareerIQ Inc. — AI-powered career intelligence.
         </span>
         <div className="flex gap-6">
-          {["Privacy", "Terms", "Contact"].map((l) => (
+          {[{name:"Privacy",path:"#"}, {name:"Terms",path:"#"}, {name:"Contact",path:"/contact"}].map((l) => (
             <span
-              key={l}
+              key={l.name}
+              onClick={() => l.path !== "#" && navigate(l.path)}
               className="text-muted text-sm hover:text-[#e8e8f0] cursor-pointer transition-colors"
             >
-              {l}
+              {l.name}
             </span>
           ))}
         </div>

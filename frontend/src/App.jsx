@@ -3,6 +3,9 @@ import { AppProvider } from './context/AppContext'
 import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
+import ForgotPasswordPage from './pages/ForgotPasswordPage'
+import SetNewPasswordPage from './pages/SetNewPasswordPage'
+import ContactPage from './pages/ContactPage'
 import DashboardLayout from './components/layout/DashboardLayout'
 import OverviewPage from './pages/dashboard/OverviewPage'
 import RoadmapPage from './pages/dashboard/RoadmapPage'
@@ -32,6 +35,9 @@ export default function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/setnewpassword" element={<SetNewPasswordPage />} />
+        <Route path="/contact" element={<ContactPage />} />
 
         {}
         <Route path="/dashboard" element={

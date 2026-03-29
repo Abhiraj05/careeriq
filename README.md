@@ -149,6 +149,14 @@ GROQ_API_KEY=your_groq_api_key
 ![image](assets/screencapture-localhost-5173-register-2026-03-28-23_21_29.png)
 
 ---
+
+### Password Reset
+![Forgot Password](assets\screencapture-localhost-5173-forgot-password-2026-03-29-11_33_47.png)
+
+---
+![Password Reset](assets\screencapture-localhost-5173-setnewpassword-2026-03-29-11_34_04.png)
+
+---
 ### DashBoard :- 
 ### Overview
 ![image](assets/screencapture-localhost-5173-dashboard-2026-03-28-23_22_46.png)

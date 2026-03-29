@@ -12,6 +12,7 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from common.email import send_email
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
+from django.conf import settings
 # Create your views here.
 
 # Register or Signup new user
@@ -89,7 +90,7 @@ class UserLoginView(APIView):
 # generates password reset link email & sends it to user
 class reset_password(APIView):
     permission_classes = [AllowAny]
-    def reset_password(request):
+    def post(self, request):
         reset_email = request.data.get("email")
         user = User.objects.filter(email=reset_email).first()
         if not user:
@@ -97,24 +98,37 @@ class reset_password(APIView):
 
         uid = urlsafe_base64_encode(force_bytes(user.id))
         token = PasswordResetTokenGenerator().make_token(user)
-        default_email = "support@careeriq.com"
+        default_email = settings.EMAIL_HOST_USER
         mail_sub = "Password Reset Link"
+        reset_link = f"http://localhost:5173/setnewpassword/?uid={uid}&token={token}"
 
-        message = f"""
-        Hello,
+        message = f"Hello,\n\nYou requested a password reset for your account. Click on the link below to set a new password:\n\n{reset_link}\n\nIf you did not request this, please ignore this email.\n\nBest regards,\nCareerIQ Support Team"
 
-        You requested a password reset for your account. Click on the link below to set a new password:
-
-       http://localhost:5173/setnewpassword/?uid={uid}&token={token}
-
-        If you did not request this, please ignore this email.
-
-        Best regards,
-        CareerIQ Support Team
+        html_message = f"""
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f4f7f6; border-radius: 12px;">
+            <div style="text-align: center; margin-bottom: 25px;">
+                <h1 style="color: #2c3e50; margin: 0; font-size: 28px; font-weight: 800; letter-spacing: 1px;">CareerIQ</h1>
+            </div>
+            <div style="background-color: #ffffff; padding: 40px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                <h2 style="color: #1a1a1a; margin-top: 0; font-size: 22px; font-weight: 600;">Reset Your Password</h2>
+                <p style="color: #4a5568; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">Hello,</p>
+                <p style="color: #4a5568; font-size: 16px; line-height: 1.6; margin-bottom: 30px;">We received a request to reset your password for your CareerIQ account. Click the button below to choose a new password.</p>
+                <div style="text-align: center; margin: 35px 0;">
+                    <a href="{reset_link}" style="background-color: #4f46e5; color: #ffffff; padding: 14px 32px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px; display: inline-block; transition: background-color 0.3s ease;">Reset Password</a>
+                </div>
+                <p style="color: #718096; font-size: 14px; line-height: 1.6; margin-top: 30px;">If the button doesn't work, copy and paste this link into your browser:<br><a href="{reset_link}" style="color: #4f46e5; word-break: break-all;">{reset_link}</a></p>
+                <p style="color: #718096; font-size: 14px; line-height: 1.6; margin-top: 20px;">If you didn't request a password reset, you can safely ignore this email.</p>
+                <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;">
+                <p style="color: #a0aec0; font-size: 14px; margin: 0;">Best regards,<br><strong style="color: #4a5568;">CareerIQ Support Team</strong></p>
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <p style="color: #a0aec0; font-size: 12px; margin: 0;">© 2024 CareerIQ. All rights reserved.</p>
+            </div>
+        </div>
         """
 
         try:
-            send_email(request, default_email, reset_email, message, mail_sub)
+            send_email(request, default_email, reset_email, message, mail_sub, html_message=html_message)
         except Exception as e:
             print(f"Reset email failed: {str(e)}")
 
@@ -123,7 +137,8 @@ class reset_password(APIView):
 
 # sets the new password 
 class set_new_password(APIView):
-    def set_new_password(request):
+    permission_classes = [AllowAny]
+    def post(self, request):
         uid = request.data.get('uid')
         token = request.data.get('token')
         new_pass = request.data.get('newpassword')
@@ -141,21 +156,35 @@ class set_new_password(APIView):
             user.set_password(new_pass)
             user.save()
 
-            default_email = "support@quizizeai.com"
+            default_email = settings.EMAIL_HOST_USER
             mail_sub = "Your Password Has Been Changed"
-            confirm_message = f"""
-            Hello {user.name},
+            
+            confirm_message = f"Hello {user.name},\n\nThis is a confirmation that the password for your account has been successfully changed.\n\nIf you did not perform this action, please contact our support team immediately.\n\nBest regards,\nCareerIQ Support Team"
 
-            This is a confirmation that the password for your account has been successfully changed.
-
-            If you did not perform this action, please contact our support team immediately.
-
-            Best regards,
-            quizize Support Team
+            html_confirm_message = f"""
+            <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f4f7f6; border-radius: 12px;">
+                <div style="text-align: center; margin-bottom: 25px;">
+                    <h1 style="color: #2c3e50; margin: 0; font-size: 28px; font-weight: 800; letter-spacing: 1px;">CareerIQ</h1>
+                </div>
+                <div style="background-color: #ffffff; padding: 40px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                    <h2 style="color: #1a1a1a; margin-top: 0; font-size: 22px; font-weight: 600;">Password Changed Successfully</h2>
+                    <p style="color: #4a5568; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">Hello {user.name},</p>
+                    <p style="color: #4a5568; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">This email is to confirm that the password for your CareerIQ account has been successfully changed.</p>
+                    <div style="background-color: #ebf8fa; border-left: 4px solid #00b5d8; padding: 15px; margin: 25px 0; border-radius: 4px;">
+                        <p style="color: #2c5282; font-size: 14px; margin: 0;">If you did not perform this action, please contact our support team immediately to secure your account.</p>
+                    </div>
+                    <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;">
+                    <p style="color: #a0aec0; font-size: 14px; margin: 0;">Best regards,<br><strong style="color: #4a5568;">CareerIQ Support Team</strong></p>
+                </div>
+                <div style="text-align: center; margin-top: 20px;">
+                    <p style="color: #a0aec0; font-size: 12px; margin: 0;">© 2024 CareerIQ. All rights reserved.</p>
+                </div>
+            </div>
             """
+
             try:
                 send_email(request, default_email, user.email,
-                           confirm_message, mail_sub)
+                           confirm_message, mail_sub, html_message=html_confirm_message)
             except Exception as e:
                 print(f"Confirmation email failed: {str(e)}")
 
@@ -163,6 +192,65 @@ class set_new_password(APIView):
         else:
             return Response({"message": "Invalid or expired token.."}, status=status.HTTP_400_BAD_REQUEST)
         
+
+class Contactus(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        name = request.data.get('name')
+        email = request.data.get('email')
+        message_text = request.data.get('message')
+
+        if not name or not email or not message_text:
+            return Response({"message": "name, email and message are required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        admin_email = settings.EMAIL_HOST_USER
+        mail_sub = f"New Contact Request from {name}"
+        
+        message = f"Name: {name}\nEmail: {email}\n\nMessage:\n{message_text}"
+
+        html_message = f"""
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f4f7f6; border-radius: 12px;">
+            <div style="text-align: center; margin-bottom: 25px;">
+                <h1 style="color: #2c3e50; margin: 0; font-size: 28px; font-weight: 800; letter-spacing: 1px;">CareerIQ Support</h1>
+            </div>
+            <div style="background-color: #ffffff; padding: 40px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                <h2 style="color: #1a1a1a; margin-top: 0; font-size: 22px; font-weight: 600;">New Contact Form Submission</h2>
+                <p style="color: #4a5568; font-size: 16px; margin-bottom: 10px;"><strong>Name:</strong> {name}</p>
+                <p style="color: #4a5568; font-size: 16px; margin-bottom: 20px;"><strong>Email:</strong> {email}</p>
+                <p style="color: #4a5568; font-size: 16px; margin-bottom: 10px;"><strong>Message:</strong></p>
+                <div style="background-color: #f8fafc; padding: 15px; border-radius: 6px; color: #4a5568; font-size: 15px; line-height: 1.6;">
+                    {message_text}
+                </div>
+            </div>
+        </div>
+        """
+
+        try:
+            send_email(request, admin_email, admin_email, message, mail_sub, html_message=html_message)
+            
+            user_sub = "We received your message"
+            user_msg = f"Hello {name},\n\nThank you for reaching out to CareerIQ! We have received your message and will get back to you shortly.\n\nBest regards,\nCareerIQ Team"
+            user_html = f"""
+            <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f4f7f6; border-radius: 12px;">
+                <div style="text-align: center; margin-bottom: 25px;">
+                    <h1 style="color: #2c3e50; margin: 0; font-size: 28px; font-weight: 800; letter-spacing: 1px;">CareerIQ</h1>
+                </div>
+                <div style="background-color: #ffffff; padding: 40px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                    <h2 style="color: #1a1a1a; margin-top: 0; font-size: 22px; font-weight: 600;">Message Received</h2>
+                    <p style="color: #4a5568; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">Hello {name},</p>
+                    <p style="color: #4a5568; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">Thank you for writing to us! This is an automated response to let you know that we have received your message and someone from our team will get back to you as soon as possible.</p>
+                    <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;">
+                    <p style="color: #a0aec0; font-size: 14px; margin: 0;">Best regards,<br><strong style="color: #4a5568;">CareerIQ Support Team</strong></p>
+                </div>
+            </div>
+            """
+            send_email(request, admin_email, email, user_msg, user_sub, html_message=user_html)
+            
+        except Exception as e:
+            print(f"Contact email failed: {str(e)}")
+
+        return Response({"message": "Your message has been sent successfully!"})
+
 
 class MeView(APIView):
     permission_classes = [IsAuthenticated]
